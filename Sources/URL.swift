@@ -45,7 +45,7 @@ extension URL {
         return components.url!
     }
     
-    var fileExtension :String? {
+    private var fileExtension :String? {
         get {
             return self.path.components(separatedBy: ".").last
         }

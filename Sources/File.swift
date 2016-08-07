@@ -12,7 +12,7 @@ extension FileManager {
     func moveFileFrom(_ fromURL: URL, toURL destination: URL) {
         
         if !fileExists(atPath: destination.path.deepestDirectoryPath()) {
-            print("destination \(destination)")
+            // target directory does not exist. create it.
             do {
                 try self.createDirectory(at: destination.directoryURL(), withIntermediateDirectories: true, attributes: [:])
             } catch {
