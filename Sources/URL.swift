@@ -30,13 +30,22 @@ extension String {
 }
 
 extension URL {
-    enum HLSResource: String {
-        case Playlist = "m3u8"
-        case Segment = "ts"
+    enum HLSResource {
+        case Playlist
+        case Media
+        
+        init(string: String) {
+            
+            enum PlaylistTypes : String {
+                case m3u8, m3u
+            }
+            
+            self = PlaylistTypes(rawValue: string.lowercased()) == nil ? .Media : .Playlist
+        }
     }
     
     var type :HLSResource? {
-        return fileExtension.flatMap { HLSResource(rawValue: $0) }
+        return fileExtension.flatMap { HLSResource(string: $0) }
     }
     
     func directoryURL() -> URL {

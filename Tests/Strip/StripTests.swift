@@ -33,9 +33,9 @@ class URLExtensionTests: XCTestCase {
         let query = URL(string: "http://example.com/hls/stream/segment01.ts?q=thing")
         let fragment = URL(string: "http://example.com/hls/stream/segment01.ts#fragment")
         
-        XCTAssertEqual(segment?.type, .Segment)
-        XCTAssertEqual(query?.type, .Segment)
-        XCTAssertEqual(fragment?.type, .Segment)
+        XCTAssertEqual(segment?.type, .Media)
+        XCTAssertEqual(query?.type, .Media)
+        XCTAssertEqual(fragment?.type, .Media)
     }
     
     func testDetectPlaylist() {
@@ -49,13 +49,13 @@ class URLExtensionTests: XCTestCase {
     }
     
     func testIgnoreNonHLSTypes() {
-        let nonSegment = URL(string: "http://example.com/hls/stream/segment01.tsa")
-        let query = URL(string: "http://example.com/hls/stream/segment01.pts?q=thing")
-        let fragment = URL(string: "http://example.com/hls/stream/segment01.m3u8a#fragment")
+        let nonSegment = URL(string: "http://example.com/hls/stream/segment01.mp3")
+        let query = URL(string: "http://example.com/hls/stream/segment01.aac?q=thing")
+        let fragment = URL(string: "http://example.com/hls/stream/segment01.tts#fragment")
         
-        XCTAssertNil(nonSegment?.type)
-        XCTAssertNil(query?.type)
-        XCTAssertNil(fragment?.type)
+        XCTAssertEqual(nonSegment?.type, .Media)
+        XCTAssertEqual(query?.type, .Media)
+        XCTAssertEqual(fragment?.type, .Media)
     }
     
 }
