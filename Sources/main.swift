@@ -30,20 +30,8 @@ guard let sourceURL = urlAt(0, within: args), let destinationURL = urlAt(1, with
     exit(EXIT_FAILURE)
 }
 
-let session = URLSession.shared
+let downloader = Downloader(destination: destinationURL)
 
-/// Download all resources in a manifest specified at the URL, recursively if a
-/// resource is itself an m3u8 manifest.
-func downloadHLSResource(_ downloadURL: URL) {
-    session.downloadTask(with: downloadURL) { (url :URL?, response :URLResponse?, error :Error?) in
-        guard let resourceURL = response?.url, let tempfileURL = url else {
-            print("Download failed: \(downloadURL) -- \(error)")
-            return
-        }
-        ingestHLSResource(resourceURL, temporaryFileURL: tempfileURL, downloader: downloadHLSResource, destinationURL: destinationURL)
-        }.resume()
-}
-
-downloadHLSResource(sourceURL)
+downloader.downloadHLSResource(sourceURL)
 
 RunLoop.main.run()
