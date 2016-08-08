@@ -1,10 +1,10 @@
-import Cocoa
+import Foundation
 
 /// Argument Parsing
 
 func urlAt(_ position: Int, within collection: [String]) -> URL? {
     guard position < collection.count else {
-        print("Error extracting URL from argument list")
+        print("\(Process.arguments.first) requires 2 arguments: a source URL and a destination path.")
         exit(EXIT_FAILURE)
     }
     
@@ -22,7 +22,7 @@ func urlAt(_ position: Int, within collection: [String]) -> URL? {
 
 let args = Array(Process.arguments[1..<Process.arguments.count])
 
-if args.count < 1 {
+if args.count <= 1 {
     exit(EXIT_FAILURE)
 }
 
