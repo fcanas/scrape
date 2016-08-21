@@ -14,7 +14,7 @@ class StringExtensionTests: XCTestCase {
         let allStrings = [emptyString, singleCharacter, multipleLines, basic]
         
         for s in allStrings {
-            XCTAssertEqual(s, s.substring(with: s.fullRange))
+            XCTAssertEqual(s as String, s.substring(with: s.fullRange))
         }
     }
 
