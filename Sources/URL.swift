@@ -45,18 +45,18 @@ extension URL {
     }
     
     var type :HLSResource? {
-        return fileExtension.flatMap { HLSResource(string: $0) }
+        return HLSResource(string: fileExtension)
     }
     
     func directoryURL() -> URL {
         var components = URLComponents(url: self, resolvingAgainstBaseURL: false)!
-        components.path = path.deepestDirectoryPath() ?? "/"
+        components.path = path.deepestDirectoryPath()
         return components.url!
     }
     
-    private var fileExtension :String? {
+    public var fileExtension :String {
         get {
-            return self.path.components(separatedBy: ".").last
+            return self.path.components(separatedBy: ".").last ?? ""
         }
     }
 }

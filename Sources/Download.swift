@@ -15,6 +15,8 @@ class Downloader : NSObject, URLSessionDelegate, URLSessionDownloadDelegate {
     }()
     
     let destination :URL
+
+    var urlFilter :(URL) -> Bool = { _ in true }
     
     init(destination: URL) {
         self.destination = destination
@@ -31,7 +33,7 @@ class Downloader : NSObject, URLSessionDelegate, URLSessionDownloadDelegate {
         guard let resourceURL = downloadTask.currentRequest?.url else {
             return
         }
-        ingestHLSResource(resourceURL, temporaryFileURL: location, downloader: self.downloadHLSResource, destinationURL: self.destination)
+        ingestHLSResource(resourceURL, temporaryFileURL: location, downloader: self.downloadHLSResource, destinationURL: self.destination, urlFilter: urlFilter)
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {

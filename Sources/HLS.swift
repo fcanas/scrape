@@ -18,22 +18,20 @@ func resourceURLs(_ manifestString: NSString, manifestURL: URL) -> [URL] {
     
     return checkingResults.map({ (r :NSTextCheckingResult) -> URL in
         let resourceString = manifestString.substring(with: r.range)
-        print("resource string \(resourceString)")
         let resourceURL = URL(string: resourceString, relativeTo: manifestURL)!.absoluteURL
-        print("resource url: \(resourceURL)")
         return resourceURL
     })
 }
 
 let fileManager = FileManager.default
 
-func ingestHLSResource(_ originalResourceURL: URL, temporaryFileURL: URL, downloader: (URL)->Void, destinationURL: URL) {
+func ingestHLSResource(_ originalResourceURL: URL, temporaryFileURL: URL, downloader: (URL)->Void, destinationURL: URL, urlFilter :(URL)->Bool = { _ in true }) {
     let destination = destinationURL.appendingPathComponent(originalResourceURL.path, isDirectory: false)
 
     fileManager.moveFileFrom(temporaryFileURL, toURL: destination)
 
     if originalResourceURL.type == .Playlist {
         let manifestString = try! NSString(contentsOf: destination, encoding: String.Encoding.utf8.rawValue)
-        _ = resourceURLs(manifestString, manifestURL: originalResourceURL).map(downloader)
+        _ = resourceURLs(manifestString, manifestURL: originalResourceURL).filter(urlFilter).map(downloader)
     }
 }

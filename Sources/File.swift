@@ -10,21 +10,27 @@ import Foundation
 
 extension FileManager {
     func moveFileFrom(_ fromURL: URL, toURL destination: URL) {
-        
-        if !fileExists(atPath: destination.path.deepestDirectoryPath()) {
+
+        var destinationComponents = URLComponents(url: destination, resolvingAgainstBaseURL: false)!
+
+        destinationComponents.path = destinationComponents.path.replacingOccurrences(of: "//", with: "/")
+
+        let dest = destinationComponents.url!
+
+        if !fileExists(atPath: dest.path.deepestDirectoryPath()) {
             // target directory does not exist. create it.
             do {
-                try self.createDirectory(at: destination.directoryURL(), withIntermediateDirectories: true, attributes: [:])
+                try self.createDirectory(at: dest.directoryURL(), withIntermediateDirectories: true, attributes: [:])
             } catch {
                 print("error creating intermediate directories")
             }
         }
         
         do {
-            try self.moveItem(at: fromURL, to: destination)
+            try self.moveItem(at: fromURL, to: dest)
         } catch let e as NSError {
             do {
-                try self.replaceItem(at: destination, withItemAt: fromURL, backupItemName: nil, options: FileManager.ItemReplacementOptions(), resultingItemURL: nil)
+                try self.replaceItem(at: dest, withItemAt: fromURL, backupItemName: nil, options: FileManager.ItemReplacementOptions(), resultingItemURL: nil)
             } catch let er as NSError {
                 print("bail: \(er)")
                 return

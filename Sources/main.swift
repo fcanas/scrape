@@ -42,6 +42,10 @@ guard let sourceURL = urlAt(0, within: args), let destinationURL = urlAt(1, with
 
 let downloader = Downloader(destination: destinationURL)
 
+downloader.urlFilter = { url in
+    url.fileExtension.hasPrefix("m3u")
+}
+
 downloader.downloadHLSResource(sourceURL)
 
 RunLoop.main.run()
