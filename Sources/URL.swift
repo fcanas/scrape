@@ -24,8 +24,7 @@ extension String {
         guard let lastSlashIndex = self.range(of: "/", options: .backwards)?.lowerBound else {
             return "/"
         }
-        
-        return self.substring(to: self.index(after: lastSlashIndex))
+        return String(self[...lastSlashIndex])
     }
 }
 

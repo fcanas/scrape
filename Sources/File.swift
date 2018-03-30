@@ -22,7 +22,7 @@ extension FileManager {
             do {
                 try self.createDirectory(at: dest.directoryURL(), withIntermediateDirectories: true, attributes: [:])
             } catch {
-                print("error creating intermediate directories")
+                print("error creating intermediate directories \(error)")
             }
         }
         

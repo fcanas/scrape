@@ -1,6 +1,7 @@
 //  Copyright © 2016 Fabian Canas. All rights reserved.
 
 import XCTest
+import Foundation
 @testable import Strip
 
 class StringExtensionTests: XCTestCase {

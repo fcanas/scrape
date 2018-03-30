@@ -37,7 +37,7 @@ class Downloader : NSObject, URLSessionDelegate, URLSessionDownloadDelegate {
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        print("Failed to download : \(task.originalRequest?.url)")
+        print("\(error != nil ? "failed : \(error!)" : "success") : \(task.originalRequest?.url?.absoluteString ?? "no URL")")
     }
     
 }
