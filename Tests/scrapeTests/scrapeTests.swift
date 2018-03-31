@@ -2,7 +2,7 @@
 
 import XCTest
 import Foundation
-@testable import Strip
+@testable import scrape
 
 class StringExtensionTests: XCTestCase {
     

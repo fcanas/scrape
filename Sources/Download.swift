@@ -9,7 +9,9 @@
 import Foundation
 
 class Downloader : NSObject, URLSessionDelegate, URLSessionDownloadDelegate {
-    
+
+    private let group: DispatchGroup
+
     private lazy var session :URLSession = {
         return URLSession(configuration: URLSessionConfiguration.default, delegate: self, delegateQueue: nil)
     }()
@@ -18,14 +20,16 @@ class Downloader : NSObject, URLSessionDelegate, URLSessionDownloadDelegate {
 
     var urlFilter :(URL) -> Bool = { _ in true }
     
-    init(destination: URL) {
+    init(destination: URL, group: DispatchGroup) {
         self.destination = destination
+        self.group = group
     }
     
     /// Download all resources in a manifest specified at the URL, recursively if a
     /// resource is itself an m3u8 manifest.
     func downloadHLSResource(_ downloadURL: URL) {
         let task = session.downloadTask(with: downloadURL)
+        group.enter()
         task.resume()
     }
     
@@ -37,7 +41,8 @@ class Downloader : NSObject, URLSessionDelegate, URLSessionDownloadDelegate {
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        print("\(error != nil ? "failed : \(error!)" : "success") : \(task.originalRequest?.url?.absoluteString ?? "no URL")")
+        diagnostic("\(error != nil ? "failed : \(error!)" : "success") : \(task.originalRequest?.url?.absoluteString ?? "no URL")")
+        group.leave()
     }
     
 }

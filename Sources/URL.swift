@@ -58,4 +58,16 @@ extension URL {
             return self.path.components(separatedBy: ".").last ?? ""
         }
     }
+
+    public init?(localOrRemoteString: String) {
+        if let url = URL(string: localOrRemoteString) {
+            if url.scheme == nil {
+                self = URL(fileURLWithPath: url.path)
+            } else {
+                self = url
+            }
+        } else {
+            return nil
+        }
+    }
 }

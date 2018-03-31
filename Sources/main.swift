@@ -12,40 +12,68 @@ import Foundation
 
 let processInfo = ProcessInfo()
 
-func urlAt(_ position: Int, within collection: [String]) -> URL? {
-    guard position < collection.count else {
-        print("\(processInfo.arguments.first!) requires 2 arguments: a source URL and a destination path.")
+var args = Array(processInfo.arguments[1..<processInfo.arguments.count])
+
+func printUsage() {
+    print("usage: scrape [-p] input_url output_url")
+    print("  input_url     a remote URL to an m3u8 HLS playlist")
+    print("  output_url    a local path where the HLS stream should be saved")
+    print("  -p            download only playlist files")
+    print("  -v            verbose output")
+}
+
+guard args.count >= 2 else {
+    print("At least 2 arguments needed.")
+    printUsage()
+    exit(EXIT_FAILURE)
+}
+
+guard let destinationURL = URL(localOrRemoteString:args.popLast()!) else {
+    print("Destination path appears invalid")
+    printUsage()
+    exit(EXIT_FAILURE)
+}
+
+guard let sourceURL = URL(localOrRemoteString:args.popLast()!) else {
+    print("Source URL appears invalid")
+    printUsage()
+    exit(EXIT_FAILURE)
+}
+
+enum Option: String {
+    case playlistOnly = "-p"
+    case verbose = "-v"
+}
+
+let group = DispatchGroup()
+
+let downloader = Downloader(destination: destinationURL, group: group)
+
+fileprivate var verbose = false
+
+func diagnostic(_ string: String) {
+    if verbose {
+        print(string)
+    }
+}
+
+while let arg = args.popLast() {
+    guard let option = Option(rawValue: arg) else {
+        print("Unrecognized option: \(arg)")
+        printUsage()
         exit(EXIT_FAILURE)
     }
-    
-    if let url = URL(string: collection[position]) {
-        print(url)
-        if url.scheme == nil {
-            return URL(fileURLWithPath: url.path)
+    switch option {
+    case .playlistOnly:
+        downloader.urlFilter = { url in
+            url.fileExtension.hasPrefix("m3u")
         }
-        return url
-    } else {
-        print("Expected valid URL for argument \(position)")
+    case .verbose:
+        verbose = true
     }
-    return nil
-}
-
-let args = Array(processInfo.arguments[1..<processInfo.arguments.count])
-
-if args.count <= 1 {
-    exit(EXIT_FAILURE)
-}
-
-guard let sourceURL = urlAt(0, within: args), let destinationURL = urlAt(1, within: args) else {
-    exit(EXIT_FAILURE)
-}
-
-let downloader = Downloader(destination: destinationURL)
-
-downloader.urlFilter = { url in
-    url.fileExtension.hasPrefix("m3u")
 }
 
 downloader.downloadHLSResource(sourceURL)
 
-RunLoop.main.run()
+group.wait()
+

@@ -22,7 +22,7 @@ extension FileManager {
             do {
                 try self.createDirectory(at: dest.directoryURL(), withIntermediateDirectories: true, attributes: [:])
             } catch {
-                print("error creating intermediate directories \(error)")
+                diagnostic("error creating intermediate directories \(error)")
             }
         }
         
@@ -32,10 +32,10 @@ extension FileManager {
             do {
                 try self.replaceItem(at: dest, withItemAt: fromURL, backupItemName: nil, options: FileManager.ItemReplacementOptions(), resultingItemURL: nil)
             } catch let er as NSError {
-                print("bail: \(er)")
+                diagnostic("bail: \(er)")
                 return
             }
-            print("problem moving file \(e)")
+            diagnostic("problem moving file \(e)")
         }
     }
 }
