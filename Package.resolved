@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "FFCParserCombinator",
+        "repositoryURL": "https://github.com/fcanas/FFCParserCombinator.git",
+        "state": {
+          "branch": null,
+          "revision": "b9510a294c3cdd4003a847ab3b7fe7b723e3878c",
+          "version": "0.0.5"
+        }
+      },
+      {
+        "package": "HLSCore",
+        "repositoryURL": "https://github.com/fcanas/HLSCore.git",
+        "state": {
+          "branch": null,
+          "revision": "16223d881a2d44c2a13aef05d639783b9cfbdcd5",
+          "version": "0.0.2"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -7,20 +7,25 @@
 //
 
 import Foundation
+import Parsing
 
 // Lines that are neither comments nor tags are URLs to resources - and don't begin with #
 let resourceExpression = try! NSRegularExpression(pattern: "^(?!#).+", options: [.anchorsMatchLines])
 
 /// Given an HLS manifest string, and the manifest's URL, generates an array of
 /// resource URLs specified in the manifest.
-func resourceURLs(_ manifestString: NSString, manifestURL: URL) -> [URL] {
-    let checkingResults :[NSTextCheckingResult] = resourceExpression.matches(in: manifestString as String, options: [], range: manifestString.fullRange)
-    
-    return checkingResults.map({ (r :NSTextCheckingResult) -> URL in
-        let resourceString = manifestString.substring(with: r.range)
-        let resourceURL = URL(string: resourceString, relativeTo: manifestURL)!.absoluteURL
-        return resourceURL
-    })
+public func resourceURLs(_ manifestString: NSString, manifestURL: URL) -> [URL] {
+    let s = manifestString as String
+
+    let master = parseMasterPlaylist(string: s, atURL: manifestURL)
+    let renditionURLs = master?.renditions.compactMap({ (rendition) -> URL? in
+        rendition.uri
+    }) ?? []
+    let streamURLs = master?.streams.map({ (stream) -> URL in
+        stream.uri
+    }) ?? []
+    // De-duplicate URLs
+    return Array(Set(streamURLs + renditionURLs))
 }
 
 let fileManager = FileManager.default

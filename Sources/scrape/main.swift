@@ -7,12 +7,13 @@
 //
 
 import Foundation
+import scrapeLib
 
 /// Argument Parsing
 
 let processInfo = ProcessInfo()
 
-var args = Array(processInfo.arguments[1..<processInfo.arguments.count])
+var args: [String] = Array(processInfo.arguments[1..<processInfo.arguments.count])
 
 func printUsage() {
     print("usage: scrape [-p] input_url output_url")
@@ -48,14 +49,6 @@ enum Option: String {
 let group = DispatchGroup()
 
 let downloader = Downloader(destination: destinationURL, group: group)
-
-fileprivate var verbose = false
-
-func diagnostic(_ string: String) {
-    if verbose {
-        print(string)
-    }
-}
 
 while let arg = args.popLast() {
     guard let option = Option(rawValue: arg) else {

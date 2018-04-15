@@ -2,8 +2,39 @@
 
 import XCTest
 import Foundation
-@testable import scrape
+import scrapeLib
 
+class URLExtractionTests: XCTestCase {
+
+    func testURLExtraction() {
+        let optURL = URL(string: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8")
+        guard let url = optURL, let manifestString = try? String(contentsOf: url) else {
+            XCTFail("URL test stream at \(String(describing: optURL)) failed.")
+            return
+        }
+
+        let urls = resourceURLs(manifestString as NSString, manifestURL: url).map({$0.absoluteURL})
+
+        let expectedURLs = [
+            "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/v5/prog_index.m3u8",
+            "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/v9/prog_index.m3u8",
+            "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/v8/prog_index.m3u8",
+            "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/v7/prog_index.m3u8",
+            "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/v6/prog_index.m3u8",
+            "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/v4/prog_index.m3u8",
+            "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/v3/prog_index.m3u8",
+            "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/v2/prog_index.m3u8",
+
+            "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/a1/prog_index.m3u8",
+            "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/a2/prog_index.m3u8",
+            "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/a3/prog_index.m3u8",
+            "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/s1/en/prog_index.m3u8"]
+        XCTAssertEqual(Set(urls), Set(expectedURLs.map({URL(string:$0)!})))
+    }
+
+}
+
+/*
 class StringExtensionTests: XCTestCase {
     
     func testFullRange() {
@@ -62,5 +93,5 @@ class URLExtensionTests: XCTestCase {
     }
     
 }
-
+*/
 
