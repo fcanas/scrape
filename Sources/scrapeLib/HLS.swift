@@ -17,15 +17,24 @@ let resourceExpression = try! NSRegularExpression(pattern: "^(?!#).+", options: 
 public func resourceURLs(_ manifestString: NSString, manifestURL: URL) -> [URL] {
     let s = manifestString as String
 
-    let master = parseMasterPlaylist(string: s, atURL: manifestURL)
-    let renditionURLs = master?.renditions.compactMap({ (rendition) -> URL? in
-        rendition.uri
-    }) ?? []
-    let streamURLs = master?.streams.map({ (stream) -> URL in
-        stream.uri
-    }) ?? []
+    var urls: Set<URL> = Set()
+    if let master = parseMasterPlaylist(string: s, atURL: manifestURL) {
+        _ = master.renditions.compactMap({ rendition in
+            rendition.uri.map({urls.insert($0)})
+        })
+        _ = master.streams.map({ stream in
+            urls.insert(stream.uri)
+        })
+    }
+
+    if let media = parseMediaPlaylist(string: s, atURL: manifestURL) {
+        _ = media.segments.map { segment in
+            urls.insert(segment.resource.uri)
+        }
+    }
+
     // De-duplicate URLs
-    return Array(Set(streamURLs + renditionURLs))
+    return Array(urls)
 }
 
 let fileManager = FileManager.default
