@@ -8,6 +8,7 @@
 
 import Foundation
 import scrapeLib
+import FFCLog
 
 /// Argument Parsing
 
@@ -62,7 +63,7 @@ while let arg = args.popLast() {
             url.fileExtension.hasPrefix("m3u")
         }
     case .verbose:
-        verbose = true
+        Level.global = .all
     }
 }
 

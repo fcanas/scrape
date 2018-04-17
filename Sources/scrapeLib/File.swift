@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import FFCLog
 
 extension FileManager {
     func moveFileFrom(_ fromURL: URL, toURL destination: URL) {
@@ -22,7 +23,7 @@ extension FileManager {
             do {
                 try self.createDirectory(at: dest.directoryURL(), withIntermediateDirectories: true, attributes: [:])
             } catch {
-                diagnostic("error creating intermediate directories \(error)")
+                log("error creating intermediate directories \(error)")
             }
         }
         
@@ -32,10 +33,10 @@ extension FileManager {
             do {
                 try self.replaceItem(at: dest, withItemAt: fromURL, backupItemName: nil, options: FileManager.ItemReplacementOptions(), resultingItemURL: nil)
             } catch let er as NSError {
-                diagnostic("bail: \(er)")
+                log("bail: \(er)")
                 return
             }
-            diagnostic("problem moving file \(e)")
+            log("problem moving file \(e)")
         }
     }
 }

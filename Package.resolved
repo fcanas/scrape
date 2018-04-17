@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "FFCLog",
+        "repositoryURL": "https://github.com/fcanas/FFCLog.git",
+        "state": {
+          "branch": null,
+          "revision": "2065d65b29b6c6e296c204c094597e325a905121",
+          "version": null
+        }
+      },
+      {
         "package": "FFCParserCombinator",
         "repositoryURL": "https://github.com/fcanas/FFCParserCombinator.git",
         "state": {
@@ -15,8 +24,8 @@
         "repositoryURL": "https://github.com/fcanas/HLSCore.git",
         "state": {
           "branch": null,
-          "revision": "16223d881a2d44c2a13aef05d639783b9cfbdcd5",
-          "version": "0.0.2"
+          "revision": "93e65bd8d442fda25b74adfe43de074e675b4201",
+          "version": null
         }
       }
     ]

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import FFCLog
 
 public class Downloader : NSObject, URLSessionDelegate, URLSessionDownloadDelegate {
 
@@ -41,7 +42,7 @@ public class Downloader : NSObject, URLSessionDelegate, URLSessionDownloadDelega
     }
     
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        diagnostic("\(error != nil ? "failed : \(error!)" : "success") : \(task.originalRequest?.url?.absoluteString ?? "no URL")")
+        log("\(error != nil ? "failed : \(error!)" : "success") : \(task.originalRequest?.url?.absoluteString ?? "no URL")")
         group.leave()
     }
     
