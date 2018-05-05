@@ -15,8 +15,8 @@ let package = Package(
         )
     ],
     dependencies:[
-        .package(url: "https://github.com/fcanas/HLSCore.git", .revision("93e65bd8d442fda25b74adfe43de074e675b4201")),
-        .package(url: "https://github.com/fcanas/FFCLog.git", .revision("2065d65b29b6c6e296c204c094597e325a905121"))
+        .package(url: "https://github.com/fcanas/HLSCore.git", from: "0.0.3"),
+        .package(url: "https://github.com/fcanas/FFCLog.git", from:"0.0.1")
     ],
     targets: [
         .target(name: "scrape", dependencies: ["scrapeLib", "FFCLog"]),

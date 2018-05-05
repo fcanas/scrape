@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/fcanas/FFCLog.git",
         "state": {
           "branch": null,
-          "revision": "2065d65b29b6c6e296c204c094597e325a905121",
-          "version": null
+          "revision": "4c6a53644717b8d62a49572ee5e23ba10888397f",
+          "version": "0.0.1"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/fcanas/FFCParserCombinator.git",
         "state": {
           "branch": null,
-          "revision": "b9510a294c3cdd4003a847ab3b7fe7b723e3878c",
-          "version": "0.0.5"
+          "revision": "69bdd2421e3b00c94a3e3b74371641077c94a521",
+          "version": "0.0.6"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/fcanas/HLSCore.git",
         "state": {
           "branch": null,
-          "revision": "93e65bd8d442fda25b74adfe43de074e675b4201",
-          "version": null
+          "revision": "e5b2f43c885afd652649db02b929f15ba2c87dae",
+          "version": "0.0.3"
         }
       }
     ]
