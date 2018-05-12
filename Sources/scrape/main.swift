@@ -16,12 +16,33 @@ let processInfo = ProcessInfo()
 
 var args: [String] = Array(processInfo.arguments[1..<processInfo.arguments.count])
 
+enum Option: String {
+    case playlistOnly = "-p"
+    case verbose = "-v"
+
+    static let all: [Option] = [.playlistOnly, .verbose]
+}
+
+extension Option {
+    var usageDescription: String {
+        get {
+            switch self {
+            case .playlistOnly:
+                return "download only playlist files"
+            case .verbose:
+                return "verbose output"
+            }
+        }
+    }
+}
+
 func printUsage() {
     print("usage: scrape [-p] input_url output_url")
     print("  input_url     a remote URL to an m3u8 HLS playlist")
     print("  output_url    a local path where the HLS stream should be saved")
-    print("  -p            download only playlist files")
-    print("  -v            verbose output")
+    Option.all.forEach { (opt) in
+        print("  \(opt.rawValue)            \(opt.usageDescription)")
+    }
 }
 
 guard args.count >= 2 else {
@@ -40,11 +61,6 @@ guard let sourceURL = URL(localOrRemoteString:args.popLast()!) else {
     print("Source URL appears invalid")
     printUsage()
     exit(EXIT_FAILURE)
-}
-
-enum Option: String {
-    case playlistOnly = "-p"
-    case verbose = "-v"
 }
 
 let downloader = Downloader(destination: destinationURL)
