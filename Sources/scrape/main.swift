@@ -47,9 +47,7 @@ enum Option: String {
     case verbose = "-v"
 }
 
-let group = DispatchGroup()
-
-let downloader = Downloader(destination: destinationURL, group: group)
+let downloader = Downloader(destination: destinationURL)
 
 while let arg = args.popLast() {
     guard let option = Option(rawValue: arg) else {
@@ -69,5 +67,5 @@ while let arg = args.popLast() {
 
 downloader.downloadHLSResource(sourceURL)
 
-group.wait()
+downloader.group.wait()
 

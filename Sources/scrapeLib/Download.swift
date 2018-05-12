@@ -11,7 +11,7 @@ import FFCLog
 
 public class Downloader : NSObject, URLSessionDelegate, URLSessionDownloadDelegate {
 
-    private let group: DispatchGroup
+    public let group: DispatchGroup
 
     private lazy var session :URLSession = {
         return URLSession(configuration: URLSessionConfiguration.default, delegate: self, delegateQueue: nil)
@@ -21,7 +21,7 @@ public class Downloader : NSObject, URLSessionDelegate, URLSessionDownloadDelega
 
     public var urlFilter :(URL) -> Bool = { _ in true }
     
-    public init(destination: URL, group: DispatchGroup) {
+    public init(destination: URL, group: DispatchGroup = DispatchGroup()) {
         self.destination = destination
         self.group = group
     }
