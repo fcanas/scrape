@@ -63,7 +63,7 @@ guard let sourceURL = URL(localOrRemoteString:args.popLast()!) else {
     exit(EXIT_FAILURE)
 }
 
-let downloader = Downloader(destination: destinationURL)
+let downloader = Downloader(ingester: HLSIngester(), destination: destinationURL)
 
 while let arg = args.popLast() {
     guard let option = Option(rawValue: arg) else {
@@ -81,7 +81,7 @@ while let arg = args.popLast() {
     }
 }
 
-downloader.downloadHLSResource(sourceURL)
+downloader.downloadResource(sourceURL)
 
 downloader.group.wait()
 

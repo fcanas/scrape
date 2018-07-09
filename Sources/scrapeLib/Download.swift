@@ -20,15 +20,18 @@ public class Downloader : NSObject, URLSessionDelegate, URLSessionDownloadDelega
     let destination :URL
 
     public var urlFilter :(URL) -> Bool = { _ in true }
+
+    let ingester: Ingester
     
-    public init(destination: URL, group: DispatchGroup = DispatchGroup()) {
+    public init(ingester: Ingester, destination: URL, group: DispatchGroup = DispatchGroup()) {
+        self.ingester = ingester
         self.destination = destination
         self.group = group
     }
     
-    /// Download all resources in a manifest specified at the URL, recursively if a
-    /// resource is itself an m3u8 manifest.
-    public func downloadHLSResource(_ downloadURL: URL) {
+    /// Download all resources in a manifest specified at the URL, recursively
+    /// if the ingester demands it.
+    public func downloadResource(_ downloadURL: URL) {
         let task = session.downloadTask(with: downloadURL)
         group.enter()
         task.resume()
@@ -38,7 +41,7 @@ public class Downloader : NSObject, URLSessionDelegate, URLSessionDownloadDelega
         guard let resourceURL = downloadTask.currentRequest?.url else {
             return
         }
-        ingestHLSResource(resourceURL, temporaryFileURL: location, downloader: self.downloadHLSResource, destinationURL: self.destination, urlFilter: urlFilter)
+        ingester.ingest(resource: resourceURL, temporaryFileURL: location, downloader: self.downloadResource, destinationURL: self.destination, urlFilter: urlFilter)
     }
     
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
