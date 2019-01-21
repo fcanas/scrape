@@ -9,23 +9,23 @@
 import Foundation
 import FFCLog
 
-public class Downloader : NSObject, URLSessionDelegate, URLSessionDownloadDelegate {
+public class Downloader: NSObject, URLSessionDelegate, URLSessionDownloadDelegate {
 
     public let group: DispatchGroup
 
-    private lazy var session :URLSession = {
+    private lazy var session: URLSession = {
         return URLSession(configuration: URLSessionConfiguration.default, delegate: self, delegateQueue: nil)
     }()
-    
-    let destination :URL
 
-    public var urlFilter :(URL) -> Bool = { _ in true }
-    
+    let destination: URL
+
+    public var urlFilter: (URL) -> Bool = { _ in true }
+
     public init(destination: URL, group: DispatchGroup = DispatchGroup()) {
         self.destination = destination
         self.group = group
     }
-    
+
     /// Download all resources in a manifest specified at the URL, recursively if a
     /// resource is itself an m3u8 manifest.
     public func downloadHLSResource(_ downloadURL: URL) {
@@ -33,17 +33,25 @@ public class Downloader : NSObject, URLSessionDelegate, URLSessionDownloadDelega
         group.enter()
         task.resume()
     }
-    
-    public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+
+    public func urlSession(_ session: URLSession,
+                           downloadTask: URLSessionDownloadTask,
+                           didFinishDownloadingTo location: URL) {
         guard let resourceURL = downloadTask.currentRequest?.url else {
             return
         }
-        ingestHLSResource(resourceURL, temporaryFileURL: location, downloader: self.downloadHLSResource, destinationURL: self.destination, urlFilter: urlFilter)
+        ingestHLSResource(resourceURL,
+                          temporaryFileURL: location,
+                          downloader: self.downloadHLSResource,
+                          destinationURL: self.destination,
+                          urlFilter: urlFilter)
     }
-    
+
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        log("\(error != nil ? "failed : \(error!)" : "success") : \(task.originalRequest?.url?.absoluteString ?? "no URL")")
+        let statusString = error.map {"error downloading : \(error!)"} ?? "downloaded"
+        let urlString = task.originalRequest?.url?.absoluteString ?? "no URL"
+        log("\(statusString) : \(urlString)")
         group.leave()
     }
-    
+
 }

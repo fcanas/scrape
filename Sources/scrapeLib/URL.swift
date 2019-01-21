@@ -9,10 +9,8 @@
 import Foundation
 
 extension NSString {
-    var fullRange :NSRange {
-        get {
-            return NSRange(location: 0, length: self.length)
-        }
+    var fullRange: NSRange {
+        return NSRange(location: 0, length: self.length)
     }
 }
 
@@ -32,31 +30,29 @@ extension URL {
     enum HLSResource {
         case Playlist
         case Media
-        
+
         init(string: String) {
-            
-            enum PlaylistTypes : String {
+
+            enum PlaylistTypes: String {
                 case m3u8, m3u
             }
-            
+
             self = PlaylistTypes(rawValue: string.lowercased()) == nil ? .Media : .Playlist
         }
     }
-    
-    var type :HLSResource? {
+
+    var type: HLSResource? {
         return HLSResource(string: fileExtension)
     }
-    
+
     func directoryURL() -> URL {
         var components = URLComponents(url: self, resolvingAgainstBaseURL: false)!
         components.path = path.deepestDirectoryPath()
         return components.url!
     }
-    
-    public var fileExtension :String {
-        get {
-            return self.path.components(separatedBy: ".").last ?? ""
-        }
+
+    public var fileExtension: String {
+        return self.path.components(separatedBy: ".").last ?? ""
     }
 
     public init?(localOrRemoteString: String) {

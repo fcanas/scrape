@@ -1,0 +1,7 @@
+disabled_rules:
+  - empty_enum_arguments
+  - identifier_name
+  - nesting
+excluded:
+  - .build
+  - Tests
