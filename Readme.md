@@ -3,7 +3,7 @@
 Download HLS streams
 
 ```
-usage: scrape [-p] input_url output_url
+usage: scrape [-p] [-v] input_url output_url
   input_url     a remote URL to an m3u8 HLS playlist
   output_url    a local path where the HLS stream should be saved
   -p            download only playlist files
