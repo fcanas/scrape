@@ -41,22 +41,17 @@ public func resourceURLs(_ manifestString: NSString, manifestURL: URL) -> [URL] 
 }
 
 func ingestHLSResource(_ originalResourceURL: URL,
-                       temporaryFileURL: URL,
-                       downloader: (URL) -> Void,
-                       destinationURL: URL,
-                       urlFilter: (URL) -> Bool = { _ in true },
-                       fileManager: FileManager = FileManager.default) {
-    let destination = destinationURL.appendingPathComponent(originalResourceURL.path, isDirectory: false)
+                       temporaryFileURL: URL) -> [URL] {
 
-    fileManager.moveFileFrom(temporaryFileURL, toURL: destination)
-
-    if originalResourceURL.type == .Playlist {
-        guard let hlsString = try? NSString(contentsOf: destination,
-                                            encoding: String.Encoding.utf8.rawValue) else {
-                                                log("Playlist as \(originalResourceURL) not readable as a utf8 string",
-                                                    level: .error)
-                                                return
-                                            }
-        _ = resourceURLs(hlsString, manifestURL: originalResourceURL).filter(urlFilter).map(downloader)
+    guard originalResourceURL.type == .Playlist else {
+        return []
     }
+
+    guard let hlsString = try? NSString(contentsOf: temporaryFileURL,
+                                        encoding: String.Encoding.utf8.rawValue) else {
+                                            log("Playlist as \(originalResourceURL) not readable as a utf8 string",
+                                                level: .error)
+                                            return []
+                                        }
+    return resourceURLs(hlsString, manifestURL: originalResourceURL)
 }
