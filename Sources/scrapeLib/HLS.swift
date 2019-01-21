@@ -6,11 +6,14 @@
 //  Copyright © 2016 Fabian Canas. All rights reserved.
 //
 
+import FFCLog
 import Foundation
 import Parsing
 
+// swiftlint:disable force_try
 // Lines that are neither comments nor tags are URLs to resources - and don't begin with #
 let resourceExpression = try! NSRegularExpression(pattern: "^(?!#).+", options: [.anchorsMatchLines])
+// swiftlint:enable force_try
 
 /// Given an HLS manifest string, and the manifest's URL, generates an array of
 /// resource URLs specified in the manifest.
@@ -37,15 +40,23 @@ public func resourceURLs(_ manifestString: NSString, manifestURL: URL) -> [URL] 
     return Array(urls)
 }
 
-let fileManager = FileManager.default
-
-func ingestHLSResource(_ originalResourceURL: URL, temporaryFileURL: URL, downloader: (URL)->Void, destinationURL: URL, urlFilter :(URL)->Bool = { _ in true }) {
+func ingestHLSResource(_ originalResourceURL: URL,
+                       temporaryFileURL: URL,
+                       downloader: (URL) -> Void,
+                       destinationURL: URL,
+                       urlFilter: (URL) -> Bool = { _ in true },
+                       fileManager: FileManager = FileManager.default) {
     let destination = destinationURL.appendingPathComponent(originalResourceURL.path, isDirectory: false)
 
     fileManager.moveFileFrom(temporaryFileURL, toURL: destination)
 
     if originalResourceURL.type == .Playlist {
-        let manifestString = try! NSString(contentsOf: destination, encoding: String.Encoding.utf8.rawValue)
-        _ = resourceURLs(manifestString, manifestURL: originalResourceURL).filter(urlFilter).map(downloader)
+        guard let hlsString = try? NSString(contentsOf: destination,
+                                            encoding: String.Encoding.utf8.rawValue) else {
+                                                log("Playlist as \(originalResourceURL) not readable as a utf8 string",
+                                                    level: .error)
+                                                return
+                                            }
+        _ = resourceURLs(hlsString, manifestURL: originalResourceURL).filter(urlFilter).map(downloader)
     }
 }

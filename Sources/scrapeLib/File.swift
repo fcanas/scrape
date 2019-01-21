@@ -26,12 +26,16 @@ extension FileManager {
                 log("error creating intermediate directories \(error)")
             }
         }
-        
+
         do {
             try self.moveItem(at: fromURL, to: dest)
         } catch let e as NSError {
             do {
-                try self.replaceItem(at: dest, withItemAt: fromURL, backupItemName: nil, options: FileManager.ItemReplacementOptions(), resultingItemURL: nil)
+                try self.replaceItem(at: dest,
+                                     withItemAt: fromURL,
+                                     backupItemName: nil,
+                                     options: FileManager.ItemReplacementOptions(),
+                                     resultingItemURL: nil)
             } catch let er as NSError {
                 log("bail: \(er)")
                 return
@@ -40,5 +44,3 @@ extension FileManager {
         }
     }
 }
-
-

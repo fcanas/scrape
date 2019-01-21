@@ -47,13 +47,13 @@ guard args.count >= 2 else {
     exit(EXIT_FAILURE)
 }
 
-guard let destinationURL = URL(localOrRemoteString:args.popLast()!) else {
+guard let destinationURL = URL(localOrRemoteString: args.popLast()!) else {
     print("Destination path appears invalid")
     printUsage()
     exit(EXIT_FAILURE)
 }
 
-guard let sourceURL = URL(localOrRemoteString:args.popLast()!) else {
+guard let sourceURL = URL(localOrRemoteString: args.popLast()!) else {
     print("Source URL appears invalid")
     printUsage()
     exit(EXIT_FAILURE)
@@ -80,4 +80,3 @@ while let arg = args.popLast() {
 downloader.downloadHLSResource(sourceURL)
 
 downloader.group.wait()
-
