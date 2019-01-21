@@ -16,31 +16,27 @@ let processInfo = ProcessInfo()
 
 var args: [String] = Array(processInfo.arguments[1..<processInfo.arguments.count])
 
-enum Option: String {
+enum Option: String, CaseIterable {
     case playlistOnly = "-p"
     case verbose = "-v"
-
-    static let all: [Option] = [.playlistOnly, .verbose]
 }
 
 extension Option {
     var usageDescription: String {
-        get {
-            switch self {
-            case .playlistOnly:
-                return "download only playlist files"
-            case .verbose:
-                return "verbose output"
-            }
+        switch self {
+        case .playlistOnly:
+            return "download only playlist files"
+        case .verbose:
+            return "verbose output"
         }
     }
 }
 
 func printUsage() {
-    print("usage: scrape [-p] input_url output_url")
+    print("usage: scrape \(Option.allCases.reduce("", { $0 + "[\($1.rawValue)] " }))input_url output_url")
     print("  input_url     a remote URL to an m3u8 HLS playlist")
     print("  output_url    a local path where the HLS stream should be saved")
-    Option.all.forEach { (opt) in
+    Option.allCases.forEach { (opt) in
         print("  \(opt.rawValue)            \(opt.usageDescription)")
     }
 }
