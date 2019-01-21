@@ -25,10 +25,10 @@ public class Downloader: NSObject, URLSessionDelegate, URLSessionDownloadDelegat
     /// Defaults to accepting all URLs
     public var urlFilter: (URL) -> Bool = { _ in true }
 
-    private let ingest: (URL, URL) -> URL
+    private let ingest: (URL, URL) -> [URL]
 
     public init(destination: URL,
-                ingestFunction: (URL, URL) -> [URL],
+                ingestFunction: @escaping (URL, URL) -> [URL],
                 fileManager: FileManager = FileManager.default,
                 group: DispatchGroup = DispatchGroup()) {
         self.destination = destination
@@ -52,7 +52,7 @@ public class Downloader: NSObject, URLSessionDelegate, URLSessionDownloadDelegat
             return
         }
         // Get embedded URLs for recursive loading
-        let newURLs = ingest(originalResourceURL, temporaryFileURL: location)
+        let newURLs = ingest(originalResourceURL, location)
         let destination = self.destination.appendingPathComponent(originalResourceURL.path, isDirectory: false)
         // Move downloaded resource to final destination
         fileManager.moveFileFrom(location, toURL: destination)
