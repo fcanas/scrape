@@ -48,7 +48,7 @@ public class Downloader: NSObject, URLSessionDelegate, URLSessionDownloadDelegat
     }
 
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        let statusString = error.map {"error downloading : \(error!)"} ?? "downloaded"
+        let statusString = error.map {"error downloading : \($0)"} ?? "downloaded"
         let urlString = task.originalRequest?.url?.absoluteString ?? "no URL"
         log("\(statusString) : \(urlString)")
         group.leave()
