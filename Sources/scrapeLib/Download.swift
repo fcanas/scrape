@@ -19,16 +19,27 @@ public class Downloader: NSObject, URLSessionDelegate, URLSessionDownloadDelegat
 
     let destination: URL
 
+    let fileManager: FileManager
+
+    /// A filter indicating whether a URL should be downloaded
+    /// Defaults to accepting all URLs
     public var urlFilter: (URL) -> Bool = { _ in true }
 
-    public init(destination: URL, group: DispatchGroup = DispatchGroup()) {
+    private let ingest: (URL, URL) -> URL
+
+    public init(destination: URL,
+                ingestFunction: (URL, URL) -> [URL],
+                fileManager: FileManager = FileManager.default,
+                group: DispatchGroup = DispatchGroup()) {
         self.destination = destination
+        self.fileManager = fileManager
+        self.ingest = ingestFunction
         self.group = group
     }
 
-    /// Download all resources in a manifest specified at the URL, recursively if a
-    /// resource is itself an m3u8 manifest.
-    public func downloadHLSResource(_ downloadURL: URL) {
+    /// Download the resource at the given URL, recursively if 
+    /// `ingestFunction` returns nested URLs
+    public func downloadResource(_ downloadURL: URL) {
         let task = session.downloadTask(with: downloadURL)
         group.enter()
         task.resume()
@@ -37,14 +48,16 @@ public class Downloader: NSObject, URLSessionDelegate, URLSessionDownloadDelegat
     public func urlSession(_ session: URLSession,
                            downloadTask: URLSessionDownloadTask,
                            didFinishDownloadingTo location: URL) {
-        guard let resourceURL = downloadTask.currentRequest?.url else {
+        guard let originalResourceURL = downloadTask.currentRequest?.url else {
             return
         }
-        ingestHLSResource(resourceURL,
-                          temporaryFileURL: location,
-                          downloader: self.downloadHLSResource,
-                          destinationURL: self.destination,
-                          urlFilter: urlFilter)
+        // Get embedded URLs for recursive loading
+        let newURLs = ingest(originalResourceURL, temporaryFileURL: location)
+        let destination = self.destination.appendingPathComponent(originalResourceURL.path, isDirectory: false)
+        // Move downloaded resource to final destination
+        fileManager.moveFileFrom(location, toURL: destination)
+        // Download nested resources
+        _ = newURLs.filter(self.urlFilter).map(self.downloadResource)
     }
 
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
