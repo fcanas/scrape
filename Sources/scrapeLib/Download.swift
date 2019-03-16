@@ -21,20 +21,24 @@ public class Downloader: NSObject, URLSessionDelegate, URLSessionDownloadDelegat
 
     let fileManager: FileManager
 
+    let logger: FFCLog
+
     /// A filter indicating whether a URL should be downloaded
     /// Defaults to accepting all URLs
     public var urlFilter: (URL) -> Bool = { _ in true }
 
-    private let ingest: (URL, URL) -> [URL]
+    private let ingest: (URL, URL, FFCLog) -> [URL]
 
     public init(destination: URL,
-                ingestFunction: @escaping (URL, URL) -> [URL],
+                ingestFunction: @escaping (URL, URL, FFCLog) -> [URL],
                 fileManager: FileManager = FileManager.default,
-                group: DispatchGroup = DispatchGroup()) {
+                group: DispatchGroup = DispatchGroup(),
+                logger: FFCLog) {
         self.destination = destination
         self.fileManager = fileManager
         self.ingest = ingestFunction
         self.group = group
+        self.logger = logger
     }
 
     /// Download the resource at the given URL, recursively if 
@@ -52,10 +56,10 @@ public class Downloader: NSObject, URLSessionDelegate, URLSessionDownloadDelegat
             return
         }
         // Get embedded URLs for recursive loading
-        let newURLs = ingest(originalResourceURL, location)
+        let newURLs = ingest(originalResourceURL, location, logger)
         let destination = self.destination.appendingPathComponent(originalResourceURL.path, isDirectory: false)
         // Move downloaded resource to final destination
-        fileManager.moveFileFrom(location, toURL: destination)
+        fileManager.moveFileFrom(location, toURL: destination, logger: logger)
         // Download nested resources
         _ = newURLs.filter(self.urlFilter).map(self.downloadResource)
     }
@@ -63,7 +67,7 @@ public class Downloader: NSObject, URLSessionDelegate, URLSessionDownloadDelegat
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         let statusString = error.map {"error downloading : \($0)"} ?? "downloaded"
         let urlString = task.originalRequest?.url?.absoluteString ?? "no URL"
-        log("\(statusString) : \(urlString)")
+        logger.log("\(statusString) : \(urlString)", level: .error)
         group.leave()
     }
 

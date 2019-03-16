@@ -59,7 +59,8 @@ guard let sourceURL = URL(localOrRemoteString: args.popLast()!) else {
     exit(EXIT_FAILURE)
 }
 
-let downloader = Downloader(destination: destinationURL, ingestFunction: HLS.ingestResource)
+var urlFilter: ((URL) -> Bool)?
+var logLevel: Level = .error
 
 while let arg = args.popLast() {
     guard let option = Option(rawValue: arg) else {
@@ -69,13 +70,18 @@ while let arg = args.popLast() {
     }
     switch option {
     case .playlistOnly:
-        downloader.urlFilter = { url in
+        urlFilter = { url in
             url.fileExtension.hasPrefix("m3u")
         }
     case .verbose:
-        Level.global = .all
+        logLevel = .all
     }
 }
+
+let downloader = Downloader(destination: destinationURL,
+                            ingestFunction: HLS.ingestResource,
+                            logger: FFCLog(thresholdLevel: logLevel))
+urlFilter.map { downloader.urlFilter = $0 }
 
 downloader.downloadResource(sourceURL)
 

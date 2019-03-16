@@ -20,7 +20,7 @@ public enum HLS {
 
     /// Given an HLS manifest string, and the manifest's URL, generates an array of
     /// resource URLs specified in the manifest.
-    private static func resourceURLs(_ manifestString: NSString, manifestURL: URL) -> [URL] {
+    internal static func resourceURLs(_ manifestString: NSString, manifestURL: URL) -> [URL] {
         let s = manifestString as String
 
         var urls: Set<URL> = Set()
@@ -44,7 +44,8 @@ public enum HLS {
     }
 
     public static func ingestResource(_ originalResourceURL: URL,
-                                      temporaryFileURL: URL) -> [URL] {
+                                      temporaryFileURL: URL,
+                                      logger: FFCLog) -> [URL] {
 
         guard originalResourceURL.type == .Playlist else {
             return []
@@ -52,7 +53,7 @@ public enum HLS {
 
         guard let hlsString = try? NSString(contentsOf: temporaryFileURL,
                                             encoding: String.Encoding.utf8.rawValue) else {
-                                                log("Playlist as \(originalResourceURL) not readable as a utf8 string",
+                                                logger.log("Playlist at \(originalResourceURL) not decodable as a utf8",
                                                     level: .error)
                                                 return []
                                             }
