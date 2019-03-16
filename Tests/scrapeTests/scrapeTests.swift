@@ -2,7 +2,7 @@
 
 import XCTest
 import Foundation
-import scrapeLib
+@testable import scrapeLib
 
 class URLExtractionTests: XCTestCase {
 
@@ -13,7 +13,7 @@ class URLExtractionTests: XCTestCase {
             return
         }
 
-        let urls = resourceURLs(manifestString as NSString, manifestURL: url).map({$0.absoluteURL})
+        let urls = HLS.resourceURLs(manifestString as NSString, manifestURL: url).map({$0.absoluteURL})
 
         let expectedURLs = [
             "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/v5/prog_index.m3u8",
@@ -40,7 +40,7 @@ class URLExtractionTests: XCTestCase {
             return
         }
 
-        let urls = resourceURLs(manifestString as NSString, manifestURL: url).map({$0.absoluteURL})
+        let urls = HLS.resourceURLs(manifestString as NSString, manifestURL: url).map({$0.absoluteURL})
 
         let expectedURLs = [
             "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/v3/prog_index.m3u8",
@@ -68,7 +68,7 @@ class URLExtractionTests: XCTestCase {
             return
         }
 
-        let urls = resourceURLs(manifestString as NSString, manifestURL: url).map({$0.absoluteURL})
+        let urls = HLS.resourceURLs(manifestString as NSString, manifestURL: url).map({$0.absoluteURL})
 
         let expectedURLs = (0...99).map { URL(string:"https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/s1/en/fileSequence\($0).webvtt")! }
 
@@ -82,7 +82,7 @@ class URLExtractionTests: XCTestCase {
             return
         }
 
-        let urls = resourceURLs(manifestString as NSString, manifestURL: url).map({$0.absoluteURL})
+        let urls = HLS.resourceURLs(manifestString as NSString, manifestURL: url).map({$0.absoluteURL})
 
         let expectedURLs = [
             "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/v2/main.mp4"]
@@ -96,7 +96,7 @@ class URLExtractionTests: XCTestCase {
             return
         }
 
-        let urls = Set(resourceURLs(manifestString as NSString, manifestURL: url).map({$0.absoluteURL}))
+        let urls = Set(HLS.resourceURLs(manifestString as NSString, manifestURL: url).map({$0.absoluteURL}))
 
         XCTAssertEqual(urls.count, 100)
         for i in 0...99 {
