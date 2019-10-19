@@ -19,8 +19,9 @@ var args: [String] = Array(processInfo.arguments[1..<processInfo.arguments.count
 enum Option: String {
     case playlistOnly = "-p"
     case verbose = "-v"
+    case rss = "-r"
 
-    static let all: [Option] = [.playlistOnly, .verbose]
+    static let all: [Option] = [.playlistOnly, .verbose, .rss]
 }
 
 extension Option {
@@ -31,6 +32,8 @@ extension Option {
                 return "download only playlist files"
             case .verbose:
                 return "verbose output"
+            case .rss:
+                return "download an RSS feed"
             }
         }
     }
@@ -63,7 +66,7 @@ guard let sourceURL = URL(localOrRemoteString:args.popLast()!) else {
     exit(EXIT_FAILURE)
 }
 
-let downloader = Downloader(ingester: HLSIngester(), destination: destinationURL)
+var downloader = Downloader(ingester: HLSIngester(), destination: destinationURL)
 
 while let arg = args.popLast() {
     guard let option = Option(rawValue: arg) else {
@@ -78,8 +81,12 @@ while let arg = args.popLast() {
         }
     case .verbose:
         Level.global = .all
+    case .rss:
+        downloader.ingester = PodcastIngester()
     }
 }
+
+Level.global = .info
 
 downloader.downloadResource(sourceURL)
 

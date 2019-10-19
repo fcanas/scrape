@@ -9,5 +9,5 @@
 import Foundation
 
 public protocol Ingester {
-    func ingest(resource originalResourceURL: URL, temporaryFileURL: URL, downloader: (URL)->Void, destinationURL: URL, urlFilter :(URL)->Bool)
+    func ingest(resource originalResourceURL: URL, temporaryFileURL: URL, downloader: @escaping (URL)->Void, destinationURL: URL, urlFilter :(URL)->Bool)
 }

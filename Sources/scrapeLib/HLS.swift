@@ -43,7 +43,7 @@ public class HLSIngester: Ingester {
 
     let fileManager = FileManager.default
 
-    public func ingest(resource originalResourceURL: URL, temporaryFileURL: URL, downloader: (URL)->Void, destinationURL: URL, urlFilter :(URL)->Bool = { _ in true }) {
+    public func ingest(resource originalResourceURL: URL, temporaryFileURL: URL, downloader: @escaping (URL)->Void, destinationURL: URL, urlFilter :(URL)->Bool = { _ in true }) {
         let destination = destinationURL.appendingPathComponent(originalResourceURL.path, isDirectory: false)
 
         fileManager.moveFileFrom(temporaryFileURL, toURL: destination)
