@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/fcanas/FFCParserCombinator.git",
         "state": {
           "branch": null,
-          "revision": "0cec7698f9d43167ec14029a902c71f7fef9cb52",
-          "version": "0.1.0"
+          "revision": "e54c0067289be524eb877bec50a9f6b301fbf808",
+          "version": "1.0.2"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/fcanas/HLSCore.git",
         "state": {
           "branch": null,
-          "revision": "7d8e0b7542bf387ddffc283032e7d17ee0910f83",
-          "version": "0.2.0"
+          "revision": "2835209970afdaaaf137fd7073d9c0ab2beb2905",
+          "version": "0.2.1"
         }
       }
     ]

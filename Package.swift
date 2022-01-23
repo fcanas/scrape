@@ -1,8 +1,9 @@
-// swift-tools-version:4.0
+// swift-tools-version:5.5
 import PackageDescription
 
 let package = Package(
     name: "scrape",
+    platforms: [.macOS(.v10_12)],
     products: [
         .library(
             name:"scrapeLib",
@@ -15,11 +16,11 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/fcanas/HLSCore.git", from: "0.2.0"),
+        .package(url: "https://github.com/fcanas/HLSCore.git", from: "0.2.1"),
         .package(url: "https://github.com/fcanas/FFCLog.git", from:"0.1.0")
     ],
     targets: [
-        .target(name: "scrape", dependencies: ["scrapeLib", "FFCLog"]),
+        .executableTarget(name: "scrape", dependencies: ["scrapeLib", "FFCLog"]),
         .target(name: "scrapeLib", dependencies: ["HLSCore", "FFCLog"]),
         .testTarget(name: "scrapeTests", dependencies: ["scrapeLib"])
     ]
