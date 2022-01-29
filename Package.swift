@@ -17,10 +17,15 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/fcanas/HLSCore.git", from: "0.2.1"),
-        .package(url: "https://github.com/fcanas/FFCLog.git", from:"0.1.0")
+        .package(url: "https://github.com/fcanas/FFCLog.git", from:"0.1.0"),
+        .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.4.3")),
     ],
     targets: [
-        .executableTarget(name: "scrape", dependencies: ["scrapeLib", "FFCLog"]),
+        .executableTarget(name: "scrape", dependencies: [
+            "scrapeLib",
+            "FFCLog",
+            .product(name: "ArgumentParser", package: "swift-argument-parser")
+        ]),
         .target(name: "scrapeLib", dependencies: ["HLSCore", "FFCLog"]),
         .testTarget(name: "scrapeTests", dependencies: ["scrapeLib"])
     ]
