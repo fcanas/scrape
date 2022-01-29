@@ -6,89 +6,63 @@
 //  Copyright © 2016 Fabian Canas. All rights reserved.
 //
 
+import ArgumentParser
 import Foundation
 import scrapeLib
 import FFCLog
 
-/// Argument Parsing
+extension String: Error {}
 
-let processInfo = ProcessInfo()
-
-var args: [String] = Array(processInfo.arguments[1..<processInfo.arguments.count])
-
-enum Option: String, CaseIterable {
-    case playlistOnly = "-p"
-    case verbose = "-v"
-    case help = "-h"
-}
-
-extension Option {
-    var usageDescription: String {
-        switch self {
-        case .playlistOnly:
-            return "download only playlist files"
-        case .verbose:
-            return "verbose output"
-        case .help:
-            return "show this help"
+struct Scrape: ParsableCommand {
+    
+    @Argument
+    var sourceURL: String
+    
+    @Argument(help: "A destination directory that will be the root of the downloaded HLS directory structure and files.")
+    var destinationDirectory: String
+    
+    @Flag(name:.shortAndLong, help: "Downloads only playlist files, no media files.")
+    var playlistOnly: Bool = false
+    
+    @Flag(name:.shortAndLong, help: "Prints verbose diagnostic output to the console.")
+    var verbose: Bool = false
+    
+    func run() throws {
+        
+        guard
+            let sourceURL = URL(localOrRemoteString: sourceURL)
+        else {
+            throw "Source URL"
         }
-    }
-}
-
-func printUsage() {
-    print("usage: scrape \(Option.allCases.reduce("", { $0 + "[\($1.rawValue)] " }))input_url output_url")
-    print("  input_url     a remote URL to an m3u8 HLS playlist")
-    print("  output_url    a local path where the HLS stream should be saved")
-    Option.allCases.forEach { (opt) in
-        print("  \(opt.rawValue)            \(opt.usageDescription)")
-    }
-}
-
-guard args.count >= 2 else {
-    print("At least 2 arguments needed.")
-    printUsage()
-    exit(EXIT_FAILURE)
-}
-
-guard let destinationURL = URL(localOrRemoteString: args.popLast()!) else {
-    print("Destination path appears invalid")
-    printUsage()
-    exit(EXIT_FAILURE)
-}
-
-guard let sourceURL = URL(localOrRemoteString: args.popLast()!) else {
-    print("Source URL appears invalid")
-    printUsage()
-    exit(EXIT_FAILURE)
-}
-
-var urlFilter: ((URL) -> Bool)?
-var logLevel: Level = .error
-
-while let arg = args.popLast() {
-    guard let option = Option(rawValue: arg) else {
-        print("Unrecognized option: \(arg)")
-        printUsage()
-        exit(EXIT_FAILURE)
-    }
-    switch option {
-    case .playlistOnly:
-        urlFilter = { url in
-            url.fileExtension.hasPrefix("m3u")
+        
+        guard
+            let destinationURL = URL(localOrRemoteString: destinationDirectory)
+        else {
+            throw "Source URL appears invalid"
         }
-    case .verbose:
-        logLevel = .all
-    case .help:
-        printUsage()
-        exit(EXIT_SUCCESS)
+        
+        let urlFilter: ((URL) -> Bool)?
+        
+        if playlistOnly {
+            urlFilter = { url in
+                url.fileExtension.hasPrefix("m3u")
+            }
+        } else {
+            urlFilter = nil
+        }
+        
+        let logLevel: Level = verbose ? .all : .error
+
+
+        let downloader = Downloader(destination: destinationURL,
+                                    ingestFunction: HLS.ingestResource,
+                                    logger: FFCLog(thresholdLevel: logLevel))
+        urlFilter.map { downloader.urlFilter = $0 }
+
+        downloader.downloadResource(sourceURL)
+
+        downloader.group.wait()
     }
 }
 
-let downloader = Downloader(destination: destinationURL,
-                            ingestFunction: HLS.ingestResource,
-                            logger: FFCLog(thresholdLevel: logLevel))
-urlFilter.map { downloader.urlFilter = $0 }
-
-downloader.downloadResource(sourceURL)
-
-downloader.group.wait()
+Scrape.main()
