@@ -19,6 +19,7 @@ var args: [String] = Array(processInfo.arguments[1..<processInfo.arguments.count
 enum Option: String, CaseIterable {
     case playlistOnly = "-p"
     case verbose = "-v"
+    case help = "-h"
 }
 
 extension Option {
@@ -28,6 +29,8 @@ extension Option {
             return "download only playlist files"
         case .verbose:
             return "verbose output"
+        case .help:
+            return "show this help"
         }
     }
 }
@@ -75,6 +78,9 @@ while let arg = args.popLast() {
         }
     case .verbose:
         logLevel = .all
+    case .help:
+        printUsage()
+        exit(EXIT_SUCCESS)
     }
 }
 
